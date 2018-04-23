@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Vue Wunderlist</title>
+  <!-- development version, includes helpful console warnings -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.0"></script>
+</head>
+<body>
+  <div id="app">
+    <p>{{ messages.welcome }}</p>
+    <wunderlist-lists></wunderlist-lists>
+  </div>
+
+  <script type="text/javascript">
+    Vue.http.options.emulateJSON = true;
+
+    const WunderlistList = {
+      props: ["name"],
+      template: "<li>{{ name }}</li>"
+    }
+
+    const WunderlistLists = {
+      components: {
+        "wunderlist-list": WunderlistList
+      },
+      template: "<ol><wunderlist-list v-for='list in wunderlist.lists' :key='list.id' :name='list.title'></wunderlist-list></ol>",
+      data: function() {
+        return {
+          wunderlist: {
+            lists: []
+          }
+        }
+      },
+      methods: {
+        getLists: function() {
+          this.$http.get('https://gist.githubusercontent.com/danilobarion1986/a9c9928d4ff045b3147f78220751a078/raw/ba66b507c746e33f74acf47bced2a4b3bef8686a/my-lists.json').then(response => {
+            this.wunderlist.lists = response.body
+          }, response => {
+            console.log(response)
+          });
+        }
+      },
+      beforeMount: function() {
+        this.getLists()
+      }
+    }
+
+    new Vue({
+      el: "#app",
+      data: {
+        messages: {
+          welcome: "Welcome to Vue-Wunderlist!"
+        }
+      },
+      components: {
+        "wunderlist-lists": WunderlistLists
+      }
+    })
+  </script>
+</body>
+</html>
