@@ -13,19 +13,17 @@
     <wunderlist-lists></wunderlist-lists>
   </div>
 
-  <script type="text/javascript">
-    Vue.http.options.emulateJSON = true;
-
+  <script type="text/javascript" defer>
     const WunderlistList = {
-      props: ["name"],
-      template: "<li>{{ name }}</li>"
+      props: ["name", "created_at"],
+      template: "<li>{{ name }} (Created at {{ created_at }})</li>"
     }
 
     const WunderlistLists = {
       components: {
         "wunderlist-list": WunderlistList
       },
-      template: "<ol><wunderlist-list v-for='list in wunderlist.lists' :key='list.id' :name='list.title'></wunderlist-list></ol>",
+      template: "<ol><wunderlist-list v-for='list in wunderlist.lists' :key='list.id' :name='list.title' :created_at='list.created_at.substring(0, 10)'></wunderlist-list></ol>",
       data: function() {
         return {
           wunderlist: {
